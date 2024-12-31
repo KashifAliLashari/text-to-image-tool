@@ -7,8 +7,10 @@ import { Download } from "lucide-react";
 
 const ImageGenerator = () => {
   const [prompt, setPrompt] = useState("");
+  const [apiKey, setApiKey] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [images, setImages] = useState<GeneratedImage[]>([]);
+  const [showApiInput, setShowApiInput] = useState(true);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -16,19 +18,25 @@ const ImageGenerator = () => {
       return;
     }
 
+    if (!apiKey.trim()) {
+      toast.error("Please enter your Runware API key");
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      const runware = new RunwareService(import.meta.env.VITE_RUNWARE_API_KEY);
+      const runware = new RunwareService(apiKey);
       const results = await Promise.all([
         runware.generateImage({ positivePrompt: prompt }),
         runware.generateImage({ positivePrompt: prompt }),
         runware.generateImage({ positivePrompt: prompt }),
       ]);
       setImages(results);
+      setShowApiInput(false); // Hide API input after successful generation
       toast.success("Images generated successfully!");
     } catch (error) {
       console.error("Generation error:", error);
-      toast.error("Failed to generate images. Please try again.");
+      toast.error("Failed to generate images. Please check your API key and try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -64,6 +72,18 @@ const ImageGenerator = () => {
           </p>
         </div>
 
+        {showApiInput && (
+          <div className="flex gap-4 max-w-2xl mx-auto">
+            <Input
+              type="password"
+              placeholder="Enter your Runware API key..."
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              className="flex-1"
+            />
+          </div>
+        )}
+
         <div className="flex gap-4 max-w-2xl mx-auto">
           <Input
             placeholder="Enter your prompt..."
@@ -73,14 +93,14 @@ const ImageGenerator = () => {
           />
           <Button
             onClick={handleGenerate}
-            disabled={isGenerating || !prompt.trim()}
+            disabled={isGenerating || !prompt.trim() || !apiKey.trim()}
             className="min-w-[120px]"
           >
             {isGenerating ? "Generating..." : "Generate"}
           </Button>
         </div>
 
-        <div className="image-grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isGenerating ? (
             Array(3)
               .fill(0)
@@ -92,17 +112,17 @@ const ImageGenerator = () => {
               ))
           ) : (
             images.map((image, index) => (
-              <div key={index} className="image-card">
+              <div key={index} className="relative group">
                 <img
                   src={image.imageURL}
                   alt={`Generated image ${index + 1}`}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full aspect-square object-cover rounded-lg"
                   loading="lazy"
                 />
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="download-button"
+                  className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => handleDownload(image.imageURL, index)}
                 >
                   <Download className="h-4 w-4" />
