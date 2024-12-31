@@ -4,6 +4,21 @@ import { Button } from "./ui/button";
 import { RunwareService, GeneratedImage } from "../lib/runware";
 import { toast } from "sonner";
 import { Download } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
+
+interface Resolution {
+  width: number;
+  height: number;
+}
+
+const RESOLUTIONS: Record<string, Resolution> = {
+  "1:1": { width: 1024, height: 1024 },
+  "16:9": { width: 1024, height: 576 },
+  "9:16": { width: 576, height: 1024 },
+  "4:3": { width: 1024, height: 768 },
+  "3:4": { width: 768, height: 1024 },
+};
 
 const ImageGenerator = () => {
   const [prompt, setPrompt] = useState("");
@@ -11,6 +26,7 @@ const ImageGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [showApiInput, setShowApiInput] = useState(true);
+  const [selectedRatio, setSelectedRatio] = useState("1:1");
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -25,14 +41,27 @@ const ImageGenerator = () => {
 
     setIsGenerating(true);
     try {
+      const resolution = RESOLUTIONS[selectedRatio];
       const runware = new RunwareService(apiKey);
       const results = await Promise.all([
-        runware.generateImage({ positivePrompt: prompt }),
-        runware.generateImage({ positivePrompt: prompt }),
-        runware.generateImage({ positivePrompt: prompt }),
+        runware.generateImage({ 
+          positivePrompt: prompt,
+          width: resolution.width,
+          height: resolution.height
+        }),
+        runware.generateImage({ 
+          positivePrompt: prompt,
+          width: resolution.width,
+          height: resolution.height
+        }),
+        runware.generateImage({ 
+          positivePrompt: prompt,
+          width: resolution.width,
+          height: resolution.height
+        }),
       ]);
       setImages(results);
-      setShowApiInput(false); // Hide API input after successful generation
+      setShowApiInput(false);
       toast.success("Images generated successfully!");
     } catch (error) {
       console.error("Generation error:", error);
@@ -84,20 +113,38 @@ const ImageGenerator = () => {
           </div>
         )}
 
-        <div className="flex gap-4 max-w-2xl mx-auto">
-          <Input
-            placeholder="Enter your prompt..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="flex-1"
-          />
-          <Button
-            onClick={handleGenerate}
-            disabled={isGenerating || !prompt.trim() || !apiKey.trim()}
-            className="min-w-[120px]"
-          >
-            {isGenerating ? "Generating..." : "Generate"}
-          </Button>
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="space-y-4">
+            <Label>Select Image Ratio</Label>
+            <RadioGroup
+              value={selectedRatio}
+              onValueChange={setSelectedRatio}
+              className="flex flex-wrap gap-4"
+            >
+              {Object.entries(RESOLUTIONS).map(([ratio]) => (
+                <div key={ratio} className="flex items-center space-x-2">
+                  <RadioGroupItem value={ratio} id={ratio} />
+                  <Label htmlFor={ratio}>{ratio}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <div className="flex gap-4">
+            <Input
+              placeholder="Enter your prompt..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              onClick={handleGenerate}
+              disabled={isGenerating || !prompt.trim() || !apiKey.trim()}
+              className="min-w-[120px]"
+            >
+              {isGenerating ? "Generating..." : "Generate"}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
