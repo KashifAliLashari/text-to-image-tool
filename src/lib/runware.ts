@@ -13,6 +13,8 @@ export interface GenerateImageParams {
   promptWeighting?: "compel" | "sdEmbeds";
   seed?: number | null;
   lora?: string[];
+  width?: number;  // Added this property
+  height?: number; // Added this property
 }
 
 export interface GeneratedImage {
