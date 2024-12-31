@@ -59,6 +59,11 @@ const ImageGenerator = () => {
           width: resolution.width,
           height: resolution.height
         }),
+        runware.generateImage({ 
+          positivePrompt: prompt,
+          width: resolution.width,
+          height: resolution.height
+        }),
       ]);
       setImages(results);
       setShowApiInput(false);
@@ -90,13 +95,13 @@ const ImageGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 max-w-7xl mx-auto">
+    <div className="min-h-screen p-8 max-w-7xl mx-auto bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100">
       <div className="space-y-8">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
             AI Image Generator
           </h1>
-          <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed">
+          <p className="mx-auto max-w-[700px] text-gray-600 md:text-xl/relaxed">
             Enter a prompt to generate unique AI-powered images
           </p>
         </div>
@@ -113,7 +118,7 @@ const ImageGenerator = () => {
           </div>
         )}
 
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-6 bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-lg">
           <div className="space-y-4">
             <Label>Select Image Ratio</Label>
             <RadioGroup
@@ -140,21 +145,21 @@ const ImageGenerator = () => {
             <Button
               onClick={handleGenerate}
               disabled={isGenerating || !prompt.trim() || !apiKey.trim()}
-              className="min-w-[120px]"
+              className="min-w-[120px] bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
               {isGenerating ? "Generating..." : "Generate"}
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {isGenerating ? (
-            Array(3)
+            Array(4)
               .fill(0)
               .map((_, i) => (
                 <div
                   key={i}
-                  className="aspect-square bg-muted rounded-lg animate-pulse"
+                  className="aspect-square bg-white/50 rounded-lg animate-pulse"
                 />
               ))
           ) : (
@@ -163,7 +168,7 @@ const ImageGenerator = () => {
                 <img
                   src={image.imageURL}
                   alt={`Generated image ${index + 1}`}
-                  className="w-full aspect-square object-cover rounded-lg"
+                  className="w-full aspect-square object-cover rounded-lg shadow-md"
                   loading="lazy"
                 />
                 <Button
