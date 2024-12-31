@@ -95,13 +95,13 @@ const ImageGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 max-w-7xl mx-auto bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100">
+    <div className="min-h-screen p-8 max-w-7xl mx-auto bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
       <div className="space-y-8">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-pink-800">
             AI Image Generator
           </h1>
-          <p className="mx-auto max-w-[700px] text-gray-600 md:text-xl/relaxed">
+          <p className="mx-auto max-w-[700px] text-gray-800 md:text-xl/relaxed">
             Enter a prompt to generate unique AI-powered images
           </p>
         </div>
@@ -118,7 +118,7 @@ const ImageGenerator = () => {
           </div>
         )}
 
-        <div className="max-w-2xl mx-auto space-y-6 bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-lg">
+        <div className="max-w-2xl mx-auto space-y-6 bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-lg border border-white/20">
           <div className="space-y-4">
             <Label>Select Image Ratio</Label>
             <RadioGroup
@@ -145,7 +145,7 @@ const ImageGenerator = () => {
             <Button
               onClick={handleGenerate}
               disabled={isGenerating || !prompt.trim() || !apiKey.trim()}
-              className="min-w-[120px] bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="min-w-[120px] bg-gradient-to-r from-purple-700 to-pink-700 hover:from-purple-800 hover:to-pink-800 text-white"
             >
               {isGenerating ? "Generating..." : "Generate"}
             </Button>
